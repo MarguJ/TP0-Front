@@ -2,42 +2,122 @@
 import "./styles/global.css";
 ---
 
-<html lang="en">
+<html lang="es">
   <head>
     <meta charset="utf-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="icon" href="/favicon.ico" />
-    <meta name="viewport" content="width=device-width" />
-    <meta name="generator" content={Astro.generator} />
-    <title>Formula 1 data</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Consulta rápida de la Global Demonlist de Geometry Dash." />
+    <title>Demonlist | Geometry Dash</title>
   </head>
-  <body class="bg-gray-800 text-white">
-    <h1>Formula 1 Information</h1>
-    <h2>Scuderias and drivers</h2>
-    <div class="border-white border-2 rounded-xs min-h-140 w-100">
-      <h2>Ferrari</h2>
-      <h3>Lewis Hamilton / Charles Leclerc</h3>
-      <h2>Mercedes</h2>
-      <h3>George Russel / Kimi Antonelli</h3>
-      <h2>McLaren</h2>
-      <h3>Lando Norris / Oscar Piastri</h3>
-      <h2>RedBull Racing</h2>
-      <h3>Max Verstappen / Isack Hadjar</h3>
-      <h2>Williams</h2>
-      <h3>Carlos Sainz / Alex Albon</h3>
-      <h2>Alpine</h2>
-      <h3>Franco Colapinto / Pierre Gasly</h3>
-      <h2>Audi</h2>
-      <h3>Nico Hulkenberg / Gabriel Bortoleto</h3>
-      <h2>Vcarb RacingBulls</h2>
-      <h3>Liam Lawson / Arvid Linblad</h3>
-      <h2>Aston Martin</h2>
-      <h3>Fernando Alonso / Lance Stroll</h3>
-      <h2>Haas</h2>
-      <h3>Ollie Berman / Esteban Ocon</h3>
-      <h2>Cadillac</h2>
-      <h3>Valtteri Bottas / Checho Perez</h3>
-    </div>
-    <h2>Next weekend information</h2>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="#inicio">DEMONLIST</a>
+      <nav aria-label="Navegación principal">
+        <a href="#lista">Lista</a>
+        <a href="#detalle">Detalle</a>
+      </nav>
+    </header>
+
+    <main>
+      <section id="inicio" class="hero">
+        <p class="eyebrow">GEOMETRY DASH · LISTA CLÁSICA</p>
+        <h1>Los niveles más difíciles, en una lista.</h1>
+        <p class="intro">Un visor simple de los primeros puestos de la Global Demonlist.</p>
+        <a class="button" href="#lista">Ver ranking actual</a>
+      </section>
+
+      <section id="lista" class="section list-section" aria-labelledby="lista-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">ACTUALIZADO DESDE LA API</p>
+            <h2 id="lista-title">Top de la Demonlist</h2>
+          </div>
+          <label class="search-label" for="level-search">
+            Buscar nivel
+            <input id="level-search" type="search" placeholder="Ej.: Tidal Wave" autocomplete="off" />
+          </label>
+        </div>
+        <p id="status" class="status" aria-live="polite">Cargando niveles...</p>
+        <div id="levels" class="level-list"></div>
+      </section>
+
+      <section id="detalle" class="section detail-section" aria-labelledby="detalle-title">
+        <div>
+          <p class="eyebrow">SELECCIÓN</p>
+          <h2 id="detalle-title">Información del nivel</h2>
+          <p>Elegí uno de los niveles del ranking para consultar sus datos principales.</p>
+        </div>
+        <article id="level-detail" class="level-detail" aria-live="polite">
+          <p>Esperando la lista...</p>
+        </article>
+      </section>
+
+
+    <script>
+      const endpoint = "https://api.demonlist.org/level/classic/list?limit=10&offset=0";
+      const levelsContainer = document.querySelector("#levels");
+      const status = document.querySelector("#status");
+      const detail = document.querySelector("#level-detail");
+      const searchInput = document.querySelector("#level-search");
+      let levels = [];
+
+      const formatDuration = (seconds) => {
+        const minutes = Math.floor(seconds / 60);
+        const remaining = seconds % 60;
+        return `${minutes}:${String(remaining).padStart(2, "0")}`;
+      };
+
+      const showDetail = (level) => {
+        detail.innerHTML = `
+          <span class="detail-place">#${level.placement}</span>
+          <h3>${level.name}</h3>
+          <dl>
+            <div><dt>Holder</dt><dd>${level.holder}</dd></div>
+            <div><dt>Verifier</dt><dd>${level.verifier?.username ?? "Sin dato"}</dd></div>
+            <div><dt>List percent</dt><dd>${level.list_percent}%</dd></div>
+            <div><dt>Duración</dt><dd>${formatDuration(level.length)}</dd></div>
+          </dl>
+          ${level.verification_url ? `<a href="${level.verification_url}" target="_blank" rel="noreferrer">Ver video de verificación ↗</a>` : ""}
+        `;
+      };
+
+      const renderLevels = (items) => {
+        levelsContainer.innerHTML = "";
+        if (!items.length) {
+          levelsContainer.innerHTML = "<p>No se encontraron niveles con esa búsqueda.</p>";
+          return;
+        }
+        items.forEach((level) => {
+          const button = document.createElement("button");
+          button.className = "level-row";
+          button.type = "button";
+          button.innerHTML = `<strong>#${level.placement}</strong><span>${level.name}<small>Holder: ${level.holder}</small></span><em>${Number(level.points).toFixed(0)} pts</em>`;
+          button.addEventListener("click", () => showDetail(level));
+          levelsContainer.appendChild(button);
+        });
+      };
+
+      const loadLevels = async () => {
+        try {
+          const response = await fetch(endpoint);
+          if (!response.ok) throw new Error("La API no respondió correctamente.");
+          const payload = await response.json();
+          levels = payload.data.levels;
+          status.textContent = `${levels.length} niveles cargados.`;
+          renderLevels(levels);
+          showDetail(levels[0]);
+        } catch (error) {
+          status.textContent = "No se pudieron cargar los datos de Demonlist. Intentá recargar la página.";
+          console.error(error);
+        }
+      };
+
+      searchInput.addEventListener("input", (event) => {
+        const query = event.target.value.toLowerCase().trim();
+        renderLevels(levels.filter((level) => level.name.toLowerCase().includes(query)));
+      });
+
+      loadLevels();
+    </script>
   </body>
 </html>

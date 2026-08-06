@@ -1,1 +1,247 @@
-@import 'tailwindcss'
+:root {
+  font-family: Arial, Helvetica, sans-serif;
+  color: #e9e9e9;
+  background: #101112;
+}
+* {
+  box-sizing: border-box;
+}
+html {
+  scroll-behavior: smooth;
+}
+body {
+  margin: 0;
+  background: #101112;
+}
+a {
+  color: inherit;
+}
+.site-header {
+  min-height: 64px;
+  padding: 0 6vw;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #343638;
+}
+.brand {
+  color: #f3bd23;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-decoration: none;
+}
+nav {
+  display: flex;
+  gap: 1.25rem;
+}
+nav a {
+  color: #c9c9c9;
+  font-size: 0.9rem;
+  text-decoration: none;
+}
+nav a:hover {
+  color: #fff;
+}
+main {
+  max-width: 1100px;
+  margin: auto;
+}
+.hero {
+  min-height: 400px;
+  padding: 8rem 6vw 5rem;
+  border-bottom: 1px solid #343638;
+  background: linear-gradient(110deg, #171a1b, #101112 65%);
+}
+.eyebrow {
+  margin: 0 0 0.6rem;
+  color: #f3bd23;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.11em;
+}
+h1 {
+  max-width: 720px;
+  margin: 0;
+  font-size: clamp(2.4rem, 7vw, 5.2rem);
+  line-height: 0.98;
+  letter-spacing: -0.06em;
+}
+h2 {
+  margin: 0;
+  font-size: clamp(1.7rem, 4vw, 2.7rem);
+  letter-spacing: -0.04em;
+}
+.intro {
+  max-width: 520px;
+  color: #bcbcbc;
+  font-size: 1.1rem;
+  line-height: 1.5;
+}
+.button {
+  display: inline-block;
+  margin-top: 1rem;
+  padding: 0.85rem 1rem;
+  background: #f3bd23;
+  color: #151515;
+  font-weight: bold;
+  text-decoration: none;
+}
+.section {
+  padding: 4.5rem 6vw;
+  border-bottom: 1px solid #343638;
+}
+.section-heading {
+  display: flex;
+  gap: 2rem;
+  justify-content: space-between;
+  align-items: end;
+}
+.search-label {
+  display: grid;
+  gap: 0.35rem;
+  color: #bbb;
+  font-size: 0.8rem;
+}
+input {
+  width: min(280px, 100%);
+  padding: 0.75rem;
+  border: 1px solid #555;
+  border-radius: 0;
+  background: #191a1b;
+  color: white;
+  font: inherit;
+}
+.status {
+  min-height: 1.2rem;
+  color: #aaa;
+  font-size: 0.9rem;
+}
+.level-list {
+  border-top: 1px solid #454545;
+}
+.level-row {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 68px 1fr auto;
+  gap: 1rem;
+  align-items: center;
+  padding: 1rem 0;
+  border: 0;
+  border-bottom: 1px solid #343638;
+  border-radius: 0;
+  background: transparent;
+  color: #eee;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+}
+.level-row:hover {
+  background: #1a1c1d;
+}
+.level-row strong {
+  color: #f3bd23;
+  font-size: 1.15rem;
+}
+.level-row small {
+  display: block;
+  margin-top: 0.2rem;
+  color: #aaa;
+}
+.level-row em {
+  color: #aaa;
+  font-size: 0.85rem;
+  font-style: normal;
+}
+.detail-section {
+  display: grid;
+  grid-template-columns: 1fr 1.15fr;
+  gap: 3rem;
+  background: #151617;
+}
+.detail-section > div > p:last-child,
+.api-section > p:not(.eyebrow) {
+  color: #aaa;
+  line-height: 1.55;
+}
+.level-detail {
+  min-height: 210px;
+  padding: 1.5rem;
+  border-left: 3px solid #f3bd23;
+  background: #101112;
+}
+.detail-place {
+  color: #f3bd23;
+  font-weight: bold;
+}
+.level-detail h3 {
+  margin: 0.4rem 0 1.2rem;
+  font-size: 2rem;
+}
+dl {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+dt {
+  color: #999;
+  font-size: 0.76rem;
+  text-transform: uppercase;
+}
+dd {
+  margin: 0.2rem 0 0;
+}
+.level-detail a {
+  display: inline-block;
+  margin-top: 1.2rem;
+  color: #f3bd23;
+}
+code {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+  padding: 1rem;
+  border-left: 3px solid #f3bd23;
+  background: #191a1b;
+  color: #ddd;
+}
+footer {
+  padding: 2rem 6vw;
+  color: #888;
+  font-size: 0.85rem;
+  text-align: center;
+}
+@media (max-width: 650px) {
+  .site-header {
+    padding: 0 1.25rem;
+  }
+  nav {
+    gap: 0.75rem;
+  }
+  nav a {
+    font-size: 0.8rem;
+  }
+  .hero,
+  .section {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+  .section-heading,
+  .detail-section {
+    display: block;
+  }
+  .search-label {
+    margin-top: 1.5rem;
+  }
+  input {
+    width: 100%;
+  }
+  .level-row {
+    grid-template-columns: 48px 1fr;
+  }
+  .level-row em {
+    grid-column: 2;
+  }
+  .level-detail {
+    margin-top: 2rem;
+  }
+}
