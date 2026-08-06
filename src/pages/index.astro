@@ -54,20 +54,40 @@ import "./styles/global.css";
 
 
     <script>
-      const endpoint = "https://api.demonlist.org/level/classic/list?limit=10&offset=0";
-      const levelsContainer = document.querySelector("#levels");
-      const status = document.querySelector("#status");
-      const detail = document.querySelector("#level-detail");
-      const searchInput = document.querySelector("#level-search");
-      let levels = [];
+      interface DemonLevel {
+        placement: number;
+        name: string;
+        points: string | number;
+        list_percent: number;
+        length: number;
+        holder: string;
+        verification_url?: string;
+        verifier?: { username: string };
+      }
 
-      const formatDuration = (seconds) => {
+      interface DemonlistResponse {
+        data: { levels: DemonLevel[] };
+      }
+
+      const endpoint = "https://api.demonlist.org/level/classic/list?limit=10&offset=0";
+      const getElement = <T extends Element>(selector: string): T => {
+        const element = document.querySelector<T>(selector);
+        if (!element) throw new Error(`No se encontró el elemento ${selector}`);
+        return element;
+      };
+      const levelsContainer = getElement<HTMLDivElement>("#levels");
+      const status = getElement<HTMLParagraphElement>("#status");
+      const detail = getElement<HTMLElement>("#level-detail");
+      const searchInput = getElement<HTMLInputElement>("#level-search");
+      let levels: DemonLevel[] = [];
+
+      const formatDuration = (seconds: number) => {
         const minutes = Math.floor(seconds / 60);
         const remaining = seconds % 60;
         return `${minutes}:${String(remaining).padStart(2, "0")}`;
       };
 
-      const showDetail = (level) => {
+      const showDetail = (level: DemonLevel) => {
         detail.innerHTML = `
           <span class="detail-place">#${level.placement}</span>
           <h3>${level.name}</h3>
@@ -81,7 +101,7 @@ import "./styles/global.css";
         `;
       };
 
-      const renderLevels = (items) => {
+      const renderLevels = (items: DemonLevel[]) => {
         levelsContainer.innerHTML = "";
         if (!items.length) {
           levelsContainer.innerHTML = "<p>No se encontraron niveles con esa búsqueda.</p>";
@@ -101,7 +121,7 @@ import "./styles/global.css";
         try {
           const response = await fetch(endpoint);
           if (!response.ok) throw new Error("La API no respondió correctamente.");
-          const payload = await response.json();
+          const payload = await response.json() as DemonlistResponse;
           levels = payload.data.levels;
           status.textContent = `${levels.length} niveles cargados.`;
           renderLevels(levels);
@@ -112,8 +132,8 @@ import "./styles/global.css";
         }
       };
 
-      searchInput.addEventListener("input", (event) => {
-        const query = event.target.value.toLowerCase().trim();
+      searchInput.addEventListener("input", () => {
+        const query = searchInput.value.toLowerCase().trim();
         renderLevels(levels.filter((level) => level.name.toLowerCase().includes(query)));
       });
 
